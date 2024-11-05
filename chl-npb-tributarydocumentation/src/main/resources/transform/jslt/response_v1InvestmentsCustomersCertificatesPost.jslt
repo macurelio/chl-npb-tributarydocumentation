@@ -1,0 +1,12 @@
+let response57Bis =  $headers.flows.document-create-base64.response
+let body57Bis = $response57Bis.body
+{
+    "headers" : {
+        "CamelHttpResponseCode": "200",
+        "content-type": "application/json",
+        "x-b3-span-id": ""
+    },
+    "body": {
+        "probanding": "sakt un base64"
+    } 
+}

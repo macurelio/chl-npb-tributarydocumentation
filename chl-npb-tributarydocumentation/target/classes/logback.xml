@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+	<springProperty scope="context" name="app-name" source="spring.application.name"/>
+	<springProperty scope="context" name="instance-hostname" source="spring.cloud.client.hostname"/>
+	<springProperty scope="context" name="ROOT_LEVEL" source="app.logging.root-level" defaultValue="INFO"/>
+	<springProperty scope="context" name="SHOULD_LOG_TO_FILE" source="app.logging.file.enabled"/>
+	<springProperty scope="context" name="LOG_DIR" source="app.logging.file.dir"/>
+	<springProperty scope="context" name="SHOULD_LOG_TO_KAFKA" source="app.logging.kafka.enabled"/>
+	<springProperty scope="context" name="KAFKA_BOOTSTRAP_SERVERS" source="app.logging.kafka.bootstrap-servers"/>
+	<springProperty scope="context" name="KAFKA_LOGSTASH_TOPIC" source="app.logging.kafka.topic"/>
+
+	<property name="LOG_FILE_PATH" value="${LOG_DIR}/${app-name}.log"/>
+	<property name="LOG_JSON_FILE_PATH" value="${LOG_DIR}/${app-name}-json.log"/>
+	<property name="CONSOLE_LOG_PATTERN"
+			  value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) [${app-name},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-}] %clr(${PID}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"/>
+
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="jsonConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+	</appender>
+
+	<if condition='property("SHOULD_LOG_TO_FILE").contains("true") &amp;&amp; isDefined("LOG_DIR")'>
+		<then>
+			<appender name="dailyRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${LOG_FILE_PATH}</file>
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<fileNamePattern>${LOG_DIR}/%d{yyyy-MM-dd}_${app-name}.log.gz</fileNamePattern>
+					<maxHistory>30</maxHistory>
+				</rollingPolicy>
+				<encoder>
+					<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+				</encoder>
+			</appender>
+		</then>
+	</if>
+
+	<if condition='property("SHOULD_LOG_TO_KAFKA").contains("true") &amp;&amp; isDefined("KAFKA_BOOTSTRAP_SERVERS") &amp;&amp; isDefined("KAFKA_LOGSTASH_TOPIC")'>
+		<then>
+			<appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+				<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+					<customFields>{"instance-hostname":"${instance-hostname}"}</customFields>
+				</encoder>
+				<topic>${KAFKA_LOGSTASH_TOPIC}</topic>
+
+				<keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy"/>
+				<deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy"/>
+
+				<producerConfig>bootstrap.servers=${KAFKA_BOOTSTRAP_SERVERS}</producerConfig>
+				<producerConfig>acks=0</producerConfig>
+				<appender-ref ref="consoleAppender"/>
+			</appender>
+		</then>
+	</if>
+
+	<root level="${ROOT_LEVEL}">
+		<appender-ref ref="consoleAppender"/>
+		<if condition='property("SHOULD_LOG_TO_KAFKA").contains("true") &amp;&amp; isDefined("KAFKA_BOOTSTRAP_SERVERS") &amp;&amp; isDefined("KAFKA_LOGSTASH_TOPIC")'>
+			<then>
+				<appender-ref ref="kafkaAppender"/>
+			</then>
+		</if>
+		<if condition='property("SHOULD_LOG_TO_FILE").contains("true") &amp;&amp; isDefined("LOG_DIR")'>
+			<then>
+				<appender-ref ref="dailyRollingFile"/>
+			</then>
+		</if>
+	</root>
+
+</configuration>

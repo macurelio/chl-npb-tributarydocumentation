@@ -1,0 +1,103 @@
+- route:
+    id: process-v1InvestmentsCustomersCertificatesPost
+    from:
+      uri: seda:process-v1InvestmentsCustomersCertificatesPost
+      steps:
+        #- to:
+        #    uri: bean:functional-log
+        #    parameters:
+        #      method: send(*, 'start-v1InvestmentsCustomersCertificatesPost', true)
+        #- to:
+        #    uri: bean:context
+        #    parameters:
+        #      method: get(*)
+        - choice:
+            when:
+            - jsonpath: $.[?(@.certificateId == '57bis')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, '57bis-data', true)
+                - to:
+                    uri: bean:rest-service-validations
+                    parameters:
+                      method: bis57Validation(*)
+                - to:
+                    uri: bean:document-validations
+                    parameters:
+                      method: bis57DocumentDataFormat(*)
+                #- to:
+                #    uri: file:\transform\xml\57bisDocument.xml
+                #- to: 
+                #    uri: bean:transform 
+                #    parameters:
+                #      method: xslt(*, "bis57Document_test", true)                    
+                #- to: 
+                #    uri: bean:transform 
+                #    parameters:
+                #      method: xslt(*, "57bisDocument", true)
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, 'document-create-base64', true)
+                - log:
+                    message: --------------------- ${headers.flows}
+                    logging-level: INFO
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost',false)
+            - jsonpath: $.[?(@.certificateId == '1922')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, '57bis-data', true)
+                - to: 
+                    uri: bean:transform 
+                    parameters:
+                      method: xslt(*, "57bisDocument", true)
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost',false)
+            - jsonpath: $.[?(@.certificateId == '1984')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, '1984-data', true)
+                - to: 
+                    uri: bean:transform 
+                    parameters:
+                      method: xslt(*, "1984Document", true)
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost',false)
+            - jsonpath: $.[?(@.certificateId == 'stocks_dividend')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, 'stocks-dividend-data', true)
+                - to: 
+                    uri: bean:transform 
+                    parameters:
+                      method: xslt(*, "stocks-dividend-document", true)
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost',false)        
+            otherwise:
+              steps:
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost', false)
+        #- to:
+        #    uri: bean:functional-log
+        #    parameters:
+        #      method: send(*, 'end-v1InvestmentsCustomersCertificatesPost', true)
+        

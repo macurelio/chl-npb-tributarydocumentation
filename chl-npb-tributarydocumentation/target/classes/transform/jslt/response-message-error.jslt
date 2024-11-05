@@ -1,0 +1,56 @@
+let className = $headers.exception-name
+let msg = $headers.exception-message
+let code = $headers.exception-code
+let httpCode = $headers.exception-http-code
+let lvl = $headers.exception-level
+let desc = $headers.exception-description
+
+if ( $className == "ServiceException" )
+    {
+        "headers": {
+            "CamelHttpResponseCode": $httpCode,
+            "Content-Type": "application/json",
+        },
+        "body": [
+            {
+                "code" : $code,
+                "message" : $msg,
+                "level" : $lvl,
+                "description" : $desc
+            }
+        ]
+        
+    }
+else 
+    if ( $className == "ContextException" )
+        {
+            "headers": {
+                "CamelHttpResponseCode": $httpCode,
+                "Content-Type": "application/json",
+            },
+            "body": [
+                {   
+                    "code" : $code,
+                    "message" : $msg,
+                    "level" : $lvl,
+                    "description" : $desc
+                }
+            ]
+        }
+    else 
+        {
+            "headers": {
+                "CamelHttpResponseCode": "409",
+                "Content-Type": "application/json",
+            },
+            "body": [
+                {
+                    "httpCode": $httpCode,
+                    "code" : "409",
+                    "message" : "Conflict",
+                    "level" : "ERROR",
+                    "description" : $msg + " (" + $className + ")"
+                }
+            ]
+            
+        }

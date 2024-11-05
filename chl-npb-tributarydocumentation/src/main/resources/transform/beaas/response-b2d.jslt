@@ -1,0 +1,11 @@
+let tx = .output.tx
+{
+    "system": $tx.system,
+    "name": $tx.name,
+    "status": $tx.status,
+    "rs0": [for ($tx.matrices[0].row) {for (.c) string(.nomLista) : if (.value) string(.value) else ""}],
+    "rs1": [for ($tx.matrices[1].row) {for (.c) string(.nomLista) : if (.value) string(.value) else ""}],
+    "rs2": [for ($tx.matrices[2].row) {for (.c) string(.nomLista) : if (.value) string(.value) else ""}],
+    "rs3": [for ($tx.matrices[3].row) {for (.c) string(.nomLista) : if (.value) string(.value) else ""}],
+    "rs4": [for ($tx.matrices[4].row) {for (.c) string(.nomLista) : if (.value) string(.value) else ""}]    
+}

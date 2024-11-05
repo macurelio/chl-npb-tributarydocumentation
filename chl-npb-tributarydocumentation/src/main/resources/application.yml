@@ -1,0 +1,106 @@
+server:
+  port: 9140
+
+spring:
+  application: 
+    name: chl-npb-tributarydocumentation
+  profiles:
+    active:
+    - local
+  main:
+    allow-bean-definition-overriding: true
+
+springdoc:
+  title: chl-npb-tributarydocumentation
+  version: 1.0.0
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+config:
+  service-test: false
+  git:
+    load-flows: false
+    repository: http://gitarq.cloud.cl.bsch/raceituno/gluon-test-repo.git
+    user: gln-config
+    password: gln-config
+    branch: flows
+    location: /tmp/repo/
+    directory: dev/
+    resource-file-extension: ^.*\.(groovy|java|yaml)$
+    resource-folder-name: (transform)
+  local:
+    load-flows: true
+    repository: /src/main/resources
+    resource-file-extension: ^.*\.(groovy|java|yaml)$
+
+camel:
+  springboot:
+    main-run-controller: true
+    routes-include-pattern: classpath:routing/*
+  threadpool:
+    pool-size: 100
+    max-pool-size: 500
+  threads-concurrency-max: 5000
+  seda-timeout: 500
+  resilience4j:
+    timeoutEnabled: true
+    failureRateThreshold: 99
+    waitDurationInOpenState: 5
+    automaticTransitionFromOpenToHalfOpenEnabled: true
+
+logging:
+  level:
+    root: INFO
+    com.santander.application.routing.ServiceRouting: DEBUG
+    com.santander.application.beans.*: DEBUG
+    
+app:
+  logging:
+    file:
+      enabled: false
+      dir: log
+    logging:
+      root-level: ERROR
+
+beans:
+  webclient:
+    max-in-memory-size: 512
+  server:
+    host: 0.0.0.0
+    port: 9150
+    chunked-max-content-length: 50
+  context:
+    url: https://dss-context-service-dss-dev.apps.chi01.chi.dev.cl1.paas.cloudcenter.corp/v1/context
+    default-map: session
+    default-ttl: 600000
+    default-key: token
+  b2h:
+    endpoint: rest:post:api/b2h?host=b2h.dcloud.cl.bsch
+    on-fallback-endpoint: rest:post:api/b2h?host=b2h.dcloud.cl.bsch
+  b2d:
+    endpoint: rest:post:api/b2d?host=b2dv2.dcloud.cl.bsch
+    on-fallback-endpoint: rest:post:api/b2d?host=b2dv2.dcloud.cl.bsch
+  transform:
+    example-name:
+      endpoint: jslt:transform/example-name.jslt?allowContextMapAll=true
+  functional-log:
+    event-1:
+      transform: jslt:transform/functional-log/event-1.jslt
+      endpoint: kafka:log-func-${spring.application.name}?brokers=dctamsbnr01.cl.bsch:9092
+      on-fallback-endpoint: kafka:log-func-${spring.application.name}?brokers=dctamsbnr01.cl.bsch:9092
+  rest:
+    service-1:
+      endpoint: https://api-b2d-proxy-b2d-pro.apps.chi01.chi.pro.cl1.paas.cloudcenter.corp/actuator
+      method: get
+    service-2:
+      endpoint: https://api-b2d-proxy-b2d-pro.apps.chi01.chi.pro.cl1.paas.cloudcenter.corp/actuator
+      method: get

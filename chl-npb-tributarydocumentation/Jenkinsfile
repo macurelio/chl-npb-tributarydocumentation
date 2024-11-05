@@ -1,0 +1,21 @@
+#!groovy
+@Library(['jobs-libraries@master','deploy-libraries@master']) _
+
+runPipelineWithParams (
+    [
+        PPM: '',
+        PROJECT_CODE: '',
+        STACK_NAME: '',
+        SERVICE_NAME: '',
+        PROJECT_TYPE: '',
+
+        MEMORY_LIMIT: '500m',
+        
+        LOCAL_DOCKER_COMPOSE: [
+            DESA: '',
+            INTE: '',
+            HOMO: '',
+            PROD: ''
+        ]
+    ]
+)

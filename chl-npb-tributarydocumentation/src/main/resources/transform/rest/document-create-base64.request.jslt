@@ -1,0 +1,13 @@
+let flows = $headers.properties.flows
+let base64Xml = $flows.base64XmlString
+{
+    "args": {
+    },
+    "headers": { 
+        "Authorization": $headers.token,   
+        "Content-Type": "application/json"   
+    },
+    "body": { 
+        "cdata": $base64Xml
+    }
+}

@@ -1,0 +1,41 @@
+- route:
+    id: main-v1InvestmentsCustomersCertificatesPost
+    from:
+      uri: direct:v1InvestmentsCustomersCertificatesPost
+      steps:
+      - do-try:
+          steps:
+          - to:
+              uri: direct:set-request
+          - to:
+              uri: seda:process-v1InvestmentsCustomersCertificatesPost
+          do-catch:
+          - exception:
+            - com.santander.application.model.exception.ContextException
+            steps:
+            - to:
+                uri: direct:on-exception
+            - to:
+                uri: jslt:transform/jslt/response-message-error.jslt
+          - exception:
+            - com.santander.application.model.exception.ServiceException
+            steps:
+            - to:
+                uri: direct:on-exception
+            - to:
+                uri: jslt:transform/jslt/response-message-error.jslt
+          - exception:
+            - java.lang.Exception
+            steps:
+            - to:
+                uri: direct:on-exception
+            - to:
+                uri: jslt:transform/jslt/response-message-error.jslt
+          do-finally:
+            steps:
+            - log:
+                message: pre set-response ${body}
+                logging-level: INFO
+            - to:
+                uri: direct:set-response
+              
