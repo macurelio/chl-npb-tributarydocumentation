@@ -1,0 +1,10 @@
+{
+    "headers": { 
+        "Authorization": $headers.Authorization,
+        "x-santander-client-id": $headers.x-santander-client-id,
+        "x-B3-SpanId": $headers.x-B3-SpanId,
+        "Content-Type": "application/json",
+        "HttpStatusCodeResponse": $headers.HttpStatusCode        
+    },
+    "body": .
+}

@@ -1,0 +1,40 @@
+{
+    "input": {
+        "tx": {
+            "txName": "PEGM",
+            "authHost": {
+                "canalId": $headers.context-flow.canal-id,
+                "terminalAlt": $headers.context-flow.terminal-alt,
+                "usuarioAlt": $headers.context-flow.usuario-alt
+            },
+            "header": null,
+            "escalar": [
+                {
+                    "nomLista": "PETIPDO",
+                    "value": "R"
+                },
+                {
+                    "nomLista": "PENUMDO",
+                    "value": $headers.contexf-flow.rut
+                },
+                {
+                    "nomLista": "PECANAL",
+                    "value": "0003"
+                },
+                { 
+                    "nomLista": "PECRUCE",
+                    "value": "0043"
+                },
+                {
+                    "nomLista": "PECDGEN",
+                    "value": "0035"
+                },
+                {
+                    "nomLista": "PEINDRE",
+                    "value": "N"
+                }
+            ],
+            "recall": ""
+        }
+    }
+}

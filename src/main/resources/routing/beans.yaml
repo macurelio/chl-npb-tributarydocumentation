@@ -1,0 +1,25 @@
+- beans:
+  - name: "trace-bean"
+    type: "com.santander.application.beans.TraceBean"
+
+  - name: "beaas"
+    type: "com.santander.application.beans.BEaaS"
+
+  - name: "rest"
+    type: "com.santander.application.beans.Rest"
+
+  - name: "context"
+    type: "com.santander.application.beans.Context"
+
+  - name: "functional-log"
+    type: "com.santander.application.beans.LogFunctional"
+
+  - name: "transform"
+    type: "com.santander.application.beans.Transform"
+
+  - name: "document-validations"
+    type: "com.santander.application.beans.DocumentValidations"
+  
+  - name: "rest-service-validations"
+    type: "com.santander.application.beans.RestServiceValidations"
+    

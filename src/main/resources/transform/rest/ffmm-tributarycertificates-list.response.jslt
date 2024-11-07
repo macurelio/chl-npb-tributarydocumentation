@@ -1,0 +1,6 @@
+{
+    "headers": { 
+        "Authorization": $headers.Authorization       
+    },
+    "body": .
+}

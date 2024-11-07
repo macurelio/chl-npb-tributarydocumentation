@@ -1,0 +1,18 @@
+let requestBody = $headers.properties.request-body
+if ($headers.flows.document-create-base64.response != null)
+let responseBase64 =  $headers.flows.document-create-base64.response
+let bodyBase64 = $responseBase64.body
+
+if ($headers.flows.document-create-base64.response != null)
+{
+    "headers" : {
+        "CamelHttpResponseCode": "200",
+        "content-type": "application/json",
+        "x-b3-span-id": ""
+    },
+    "body": {
+        "documentId": $requestBody.certificateId,
+        "documentUrl": $bodyBase64.urlDocument,
+        "documentB64": $bodyBase64.document
+    } 
+}

@@ -1,0 +1,11 @@
+{
+    "args": {
+        "param1": ""
+    },
+    "headers": { 
+        "Authorization": $headers.Authorization,
+        "Content-Type": "application/json"    
+    },
+    "body": {    
+    }
+}

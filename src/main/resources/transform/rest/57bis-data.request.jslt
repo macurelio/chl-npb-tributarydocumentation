@@ -1,0 +1,12 @@
+let year = $headers.properties.request-body.year
+{
+    "args": {
+        "yearid": $year
+    },
+    "headers": { 
+        "Authorization": $headers.Authorization,
+        "Content-Type": "application/json"    
+    },
+    "body": {
+    }
+}

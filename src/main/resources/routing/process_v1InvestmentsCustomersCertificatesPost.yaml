@@ -1,0 +1,103 @@
+- route:
+    id: process-v1InvestmentsCustomersCertificatesPost
+    from:
+      uri: seda:process-v1InvestmentsCustomersCertificatesPost
+      steps:
+        #- to:
+        #    uri: bean:functional-log
+        #    parameters:
+        #      method: send(*, 'start-v1InvestmentsCustomersCertificatesPost', true)
+        #- to:
+        #    uri: bean:context
+        #    parameters:
+        #      method: get(*)
+        - choice:
+            when:
+            - jsonpath: $.[?(@.certificateId == '57bis')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, '57bis-data', true)
+                - to:
+                    uri: bean:rest-service-validations
+                    parameters:
+                      method: bis57Validation(*)
+                - to:
+                    uri: bean:document-validations
+                    parameters:
+                      method: bis57DocumentDataFormat(*)
+                #- log:
+                #    message: --------------------- ${headers.flows}
+                #    logging-level: INFO
+            - jsonpath: $.[?(@.certificateId == '1922')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, '1922-data', true)
+                - to:
+                    uri: bean:rest-service-validations
+                    parameters:
+                      method: cert1922Validation(*)
+                - to:
+                    uri: bean:document-validations
+                    parameters:
+                      method: cert1922DocDataFormat(*)
+            - jsonpath: $.[?(@.certificateId == '1894')]
+              steps:
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, '1894-data', true)
+                - to:
+                    uri: bean:rest-service-validations
+                    parameters:
+                      method: cert1894Validation(*)
+                - to:
+                    uri: bean:document-validations
+                    parameters:
+                      method: cert1894DocDataFormat(*)
+            - jsonpath: $.[?(@.certificateId == 'stocks_dividend')]
+              steps:
+                - log:
+                    message: --------------------- ${headers.flows}
+                    logging-level: INFO
+                - to:
+                    uri: bean:rest
+                    parameters:
+                      method: call(*, 'stocks_dividend', true)
+            
+                - to:
+                    uri: bean:document-validations
+                    parameters:
+                      method: DocumentValidationDataFormat(*)
+     #           - to: 
+     #               uri: bean:transform 
+     #               parameters:
+     #                 method: xslt(*, "DocumentValidation", true)
+      #          - to: 
+      #              uri: bean:transform 
+      #              parameters:
+      #                method: xslt(*, "stocks_dividend", true)
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost',false)        
+           
+           
+           
+           
+           
+            otherwise:
+              steps:
+                - to:
+                    uri: bean:transform
+                    parameters:
+                      method: jslt(*, 'response_v1InvestmentsCustomersCertificatesPost', false)
+     
+     #   - to:
+     #       uri: bean:functional-log
+     #       parameters:
+     #         method: send(*, 'end-v1InvestmentsCustomersCertificatesPost', true)
+        

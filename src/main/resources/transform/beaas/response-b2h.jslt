@@ -1,0 +1,9 @@
+let tx = .output.tx
+{
+   "authHost": $tx.authHost,
+   "txname": $headers.tx-name,
+   "status": $tx.status,
+   lowercase(string($tx.txName)) : {for ($tx.escalar) lowercase(string(.nomLista)) : if (.value) string(.value) else ""},
+   "matrices": [for ($tx.matriz.row) { lowercase(string(.fmtName)) : {for (.c) lowercase(string(.nomLista)) : if (.value) string(.value) else ""}}],
+   "recall": $tx.recall
+}
